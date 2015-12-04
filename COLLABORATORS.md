@@ -1,3 +1,3 @@
 Daniel Diaz
-Daniel Marin
+Vegano
 Carolina Jiménez
