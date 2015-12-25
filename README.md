@@ -33,7 +33,7 @@ or [here (ZMQ contribution guide)](http://zeromq.org/docs:contributing),
 we use that guide as reference.
 
 Please feel free to add yourself to the 
-[COLLABORATORS](https://github.com/in-silico/judge-backend/blob/master/COLLABORATORS) 
+[COLLABORATORS](https://github.com/in-silico/judge-bot/blob/master/COLLABORATORS) 
 file in an alphanumerically sorted way before you raise the pull request.
 
 Documentation
