@@ -5,8 +5,8 @@ RUN echo "deb http://ftp.de.debian.org/debian testing contrib" >> /etc/apt/sourc
 
 RUN apt-get update && apt-get install -y \
   build-essential \
-  openjdk-7-jdk \
-  openjdk-7-jre \
+  openjdk-8-jdk \
+  openjdk-8-jre \
   python \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
