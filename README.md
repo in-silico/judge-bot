@@ -23,6 +23,32 @@ Installation
 $ addyour_command_here 
 ```
 
+
+Running images
+==============
+
+This is an example of how to test one docker image (debian)
+
+```sh
+cd debian
+docker built -t 'judge' .
+docker run -it 'judge'
+```
+
+If everithing went ok you will see something like this
+
+```
+root@a4be6542f399:/# 
+```
+
+Try to run some commands, for example
+
+```
+g++ --version
+javac -version
+```
+
+
 Contributing
 ============
 
