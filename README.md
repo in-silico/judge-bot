@@ -1,7 +1,7 @@
 # judge-bot
 ==========
 
-Judging sysmtem for UTPJudge project, this project will be connected
+Judging system for UTPJudge project, this project will be connected
 with [judge-backend](https://github.com/in-silico/judge-backend) 
 using the [ZeroMQ Library](http://zeromq.org/)
 
