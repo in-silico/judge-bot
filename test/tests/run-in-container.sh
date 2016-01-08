@@ -17,7 +17,7 @@ echo "COPY $source /" >> $tmpDir/Dockerfile
 docker build -t "$imageTag" "$tmpDir" &> /dev/null
 
 if [ $? -ne 0 ]; then
-  echo "Error while building image: $imageTag"
+  echo -e "Error while building image: $imageTag\n"
   exit 1
 fi
 
