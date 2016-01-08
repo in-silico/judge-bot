@@ -40,7 +40,7 @@ For download a pre-built image
 docker pull jhonber/debian
 ```
 
-If everithing went ok you will see something like this
+If everything went ok you will see something like this
 
 ```
 root@a4be6542f399:/# 
