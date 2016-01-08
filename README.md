@@ -35,6 +35,11 @@ docker built -t 'judge' .
 docker run -it 'judge'
 ```
 
+For download a pre-built image
+```sh
+docker pull jhonber/debian
+```
+
 If everithing went ok you will see something like this
 
 ```
