@@ -22,7 +22,7 @@ if [ $? -ne 0 ]; then
 fi
 
 trap "docker rmi -f '$imageTag' &> /dev/null" EXIT
-docker run "$imageTag" sh -c "$command" > $tmpDir/output.txt
+docker run --rm "$imageTag" sh -c "$command" > $tmpDir/output.txt
 
 result="failed"
 diff -wB expected-stdout.txt $tmpDir/output.txt &> /dev/null
