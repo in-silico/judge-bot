@@ -31,7 +31,7 @@ This is an example of how to test one docker image (debian)
 
 ```sh
 cd debian
-docker built -t 'judge' .
+docker build -t 'judge' .
 docker run -it 'judge'
 ```
 
