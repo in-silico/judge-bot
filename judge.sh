@@ -5,7 +5,8 @@ compilation="/usr/bin/g++ -o2 -static -pipe -o source source.cpp"
 execution="./source < main.in > main.out"
 host_dir="`pwd`""/run"$sub_id
 container_dir="/tmp/run"$sub_id
-commands="$compilation && $execution"
+stat_json="time -f '{\n  \"time\" : \"%e\",\n  \"memory\" : \"%M\"\n}'"
+commands="$compilation && $stat_json $execution"
 
 max_run_time="10"
 max_comp_time="10"
@@ -18,7 +19,9 @@ running=$(docker inspect --format="{{ .State.Running }}" "$container_id" 2> /dev
 
 if [ "$running" == "true" ]; then
   docker kill $cid &> /dev/null
-  echo "Time limit exceeded"
+  echo -e "{\n  \"time\" : \"$tl\",\n  \"memory\" : \"0\"\n}"
+else
+  docker logs $container_id
 fi
 
 docker rm -f $container_id &> /dev/null
