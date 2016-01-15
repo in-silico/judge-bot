@@ -40,6 +40,19 @@ For download a pre-built image
 docker pull jhonber/debian
 ```
 
+If everything went ok you will see something like this
+
+```
+root@a4be6542f399:/# 
+```
+
+Try to run some commands, for example
+
+```
+g++ --version
+javac -version
+```
+
 Running judge
 ===========
 ```sh
@@ -60,19 +73,6 @@ Output example in JSON format
   "exit_code" : "0",
   "verdict" : "MEMORY_LIMIT_EXCEEDED"
 }
-```
-
-If everything went ok you will see something like this
-
-```
-root@a4be6542f399:/# 
-```
-
-Try to run some commands, for example
-
-```
-g++ --version
-javac -version
 ```
 
 
