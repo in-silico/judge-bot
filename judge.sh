@@ -9,7 +9,7 @@ time="/usr/bin/time -f '\n%e %M'"
 
 max_run_time="10"
 max_comp_time="10"
-tl="3"
+tl="3.5"
 ml="250"
 
 commands=$(cat << EOF
