@@ -40,6 +40,28 @@ For download a pre-built image
 docker pull jhonber/debian
 ```
 
+Running judge
+===========
+```sh
+# build image
+docker build -t 'debian-testing'
+
+# or download pre-build image and tagged
+docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
+
+./judge.sh
+
+```
+Output example in JSON format
+```console
+{
+  "time" : "3.19s",
+  "memory" : "255104KB",
+  "exit_code" : "0",
+  "verdict" : "MEMORY_LIMIT_EXCEEDED"
+}
+```
+
 If everything went ok you will see something like this
 
 ```
