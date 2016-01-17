@@ -45,10 +45,10 @@ commands=$(cat << EOF
     fi
   fi
 
-  echo -e "{
-  \"time\" : "\"\$time\s\"",
-  \"memory\" : "\"\$memory\K\B\"",
-  \"exit_code\" : \"\$status\",
+  echo "{\n
+  \"time\" : "\"\$time"s\",\n
+  \"memory\" : "\"\$memory"KB\",\n
+  \"exit_code\" : \"\$status\",\n
   \"verdict\" : \"\$verdict\"\n}"
 
 EOF
