@@ -64,8 +64,13 @@ fi
 output=$(timeout $tl docker exec "$container_id" bash -c "$commands" || true)
 
 if [ "$output" == "" ]; then
-  memory=$(cat /sys/fs/cgroup/memory/docker/$container_id/memory.usage_in_bytes)
-  memory_KB=$(echo "$memory  / 1000" | bc)
+  file="/sys/fs/cgroup/memory/docker/$container_id/memory.usage_in_bytes"
+  memory_KB="0"
+
+  if [ -e $file ]; then
+    memory=$(cat $file)
+    memory_KB=$(echo "$memory  / 1000" | bc)
+  fi
 
   echo -e "{
   \"time\" : \""$tl"s\",
