@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: Compile source code inside container
+# Usage: compile source code inside container
 #
 # ./compile_in_container.sh container_id compilation_commands
 

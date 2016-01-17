@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#
+# Usage: execute submission and return verdict in json format
 #
 # ./judge.sh tl ml container_id execution_commands
 
