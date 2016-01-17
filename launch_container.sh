@@ -9,4 +9,4 @@
 # ./launch_container.sh -m 250m -w /tmp/run -v `pwd`/run1:/tmp/run
 
 
-docker run $@ -ti -d debian-testing bash
+docker run -ti -d $@ debian-testing bash

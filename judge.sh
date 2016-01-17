@@ -2,14 +2,13 @@
 
 #
 #
-# ./judge.sh tl ml max_run_time container_id execution_commands
+# ./judge.sh tl ml container_id execution_commands
+
+
 tl=$1
 shift
 
 ml=$1
-shift
-
-max_run_time=$1
 shift
 
 container_id=$1
@@ -17,17 +16,12 @@ shift
 
 execution=$@
 
-echo "tl: "$tl
-echo "ml: "$ml
-echo "max_run_time: "$max_run_time
-echo "execution: "$execution
-
 commands=$(cat << EOF
   time="0"
   memory="0"
   verdict=""
 
-  out=\$( { /usr/bin/time -f '\n%e %M' timeout $tl $execution; } 2>&1 )
+  out=\$( { /usr/bin/time -f '\n%e %M' $execution; } 2>&1 )
   status=\$?
 
   out=(\$(echo -e "\$out" | tail -n1));
@@ -60,26 +54,24 @@ commands=$(cat << EOF
 EOF
 )
 
-echo $commands
 
-verdict_json=$(docker exec "$container_id" bash -c "eval $commands")
 running=$(docker inspect --format="{{ .State.Running }}" "$container_id" 2> /dev/null)
-exit_code=$(docker inspect --format="{{ .State.ExitCode }}" "$container_id" 2> /dev/null)
-
-echo "output_json: "$verdict_json
-#echo "exit_code: "$exit_code
-#echo "running: "$running
-
-if [ "$running" == "false" ]; then
-#  docker kill $container_id &> /dev/null
-
-  echo -e "{
-  \"time\" : "\"$tl\s\"",
-  \"memory\" : \"0KB\",
-  \"exit_code\" : \"$exit_code\",
-  \"verdict\" : \"TIME_LIMIT_EXCEEDED\"\n}"
-else
-  docker logs $container_id
+if [ "$running" != "true" ]; then
+  echo "Error: container '$container_id' is not running"
+  exit 1
 fi
 
-#docker rm -f $container_id &> /dev/null
+output=$(timeout $tl docker exec "$container_id" bash -c "$commands" || true)
+
+if [ "$output" == "" ]; then
+  memory=$(cat /sys/fs/cgroup/memory/docker/$container_id/memory.usage_in_bytes)
+  memory_KB=$(echo "$memory  / 1000" | bc)
+
+  echo -e "{
+  \"time\" : \""$tl"s\",
+  \"memory\" : \""$memory_KB"KB\",
+  \"exit_code\" : \"0\",
+  \"verdict\" : \"TIME_LIMIT_EXCEEDED\"\n}"
+else
+  echo -e $output
+fi
