@@ -1,4 +1,5 @@
 var exec = require('child_process').exec;
+var fs = require('fs');
 var data = require('./data.json');
 
 var launch_params = '-m ' + data.memory_limit + 'm -w ' + data.work_directory + ' -v ' +
@@ -15,20 +16,50 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
             function(error, stdout, stderr) {
 
               if (error === null) {
-                var judge_params = data.time_limit + ' ' + data.memory_limit +
-                                   ' ' + container_id + ' "' + data.execution + '"';
 
-                var judge = exec('./judge.sh ' + judge_params,
-                  function(error, stdout, stderr) {
+                var test = 1;
+                process_submit(test);
 
-                    if (error === null) {
-                      console.log(stdout);
+                function process_submit(test) {
+                  var cur_in = 'in.' + test;
+                  var cur_out = 'out.' + test;
+
+                  fs.stat(data.volumen + '/' + cur_in, function(err, stats) {
+                    if (err === null) {
+                      fs.stat(data.volumen + '/' + cur_out, function(err, stats) {
+                        if (err === null) {
+                          var execution = data.execution.replace('main.in', cur_in);
+                          execution = execution.replace('main.out', 'other.' + test);
+
+                          var judge_params = data.time_limit + ' ' + data.memory_limit + ' ' +
+                                            container_id + ' ' + test + ' "' + execution + '"';
+
+                          var judge = exec('./judge.sh ' + judge_params,
+                            function(error, stdout, stderr) {
+
+                              if (error === null) {
+                                console.log(stdout);
+                                process_submit(test + 1);
+                              }
+                              else {
+                                console.log("judge error: ", error);
+                                process.exit(3);
+                              }
+                            });
+
+                          test ++;
+                        }
+                        else {
+                          process.exit(4);
+                        }
+                      });
                     }
                     else {
-                      console.log("judge error: ", error);
-                      process.exit(3);
+                      process.exit(4);
                     }
                   });
+
+                }
 
               }
               else {

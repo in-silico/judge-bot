@@ -11,10 +11,10 @@ int main() {
     v.push_back(i);
   }
 
-  vector<long long> vv = v;
+/*  vector<long long> vv = v;
   vector<long long> vvv = v;
   vector<long long> vvvv = v;
-
+*/
   cout << a + b << endl;
   return 0;
 }
