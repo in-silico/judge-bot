@@ -23,6 +23,46 @@ Installation
 $ addyour_command_here 
 ```
 
+Running judge
+===========
+```sh
+# build image
+docker build -t 'debian-testing'
+
+# or download pre-build image and tagged
+docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
+```
+
+**data.json** configuration: change **\<absolute path\>**
+
+```javascript
+{
+  "memory_limit": "250",
+  "time_limit": "3.5",
+  "compilation": "/usr/bin/g++ -o2 -static -pipe -o source source.cpp",
+  "execution": "./source < main.in > main.out",
+  "work_directory": "/tmp/run",
+  "volumen": "/<absolute path>/judge-bot/run1"
+}
+
+```
+
+
+```sh
+node run.js
+```
+
+Output example in JSON format
+```console
+{
+  "time" : "3.19s",
+  "memory" : "255104KB",
+  "exit_code" : "0",
+  "verdict" : "MEMORY_LIMIT_EXCEEDED"
+}
+```
+
+
 
 Running images
 ==============
@@ -51,28 +91,6 @@ Try to run some commands, for example
 ```
 g++ --version
 javac -version
-```
-
-Running judge
-===========
-```sh
-# build image
-docker build -t 'debian-testing'
-
-# or download pre-build image and tagged
-docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
-
-./judge.sh
-
-```
-Output example in JSON format
-```console
-{
-  "time" : "3.19s",
-  "memory" : "255104KB",
-  "exit_code" : "0",
-  "verdict" : "MEMORY_LIMIT_EXCEEDED"
-}
 ```
 
 
