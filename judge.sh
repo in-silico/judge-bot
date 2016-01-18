@@ -1,77 +1,82 @@
 #!/bin/bash
 
-sub_id="1"
-compilation="/usr/bin/g++ -o2 -static -pipe -o source source.cpp"
-execution="./source < main.in > main.out"
-host_dir="`pwd`""/run"$sub_id
-container_dir="/tmp/run"$sub_id
-time="/usr/bin/time -f '\n%e %M'"
+# Usage: execute submission and return verdict in json format
+#
+# ./judge.sh tl ml container_id execution_commands
 
-max_run_time="10"
-max_comp_time="10"
-tl="3.5"
-ml="250"
+
+tl=$1
+shift
+
+ml=$1
+shift
+
+container_id=$1
+shift
+
+execution=$@
 
 commands=$(cat << EOF
-  $compilation 2> /dev/null;
-  status=\$?
-
   time="0"
   memory="0"
   verdict=""
 
-  if [ "\$status" -eq "0" ]; then
-    out=\$( { $time timeout $tl $execution; } 2>&1 )
-    status=\$?
+  out=\$( { /usr/bin/time -f '\n%e %M' $execution; } 2>&1 )
+  status=\$?
 
-    out=(\$(echo -e "\$out" | tail -n1));
-    time=\${out[0]}
-    memory=\${out[1]}
-    time_exceeded=\$(/usr/bin/python -c "print \$time >= $tl")
-    memory_exceeded=\$(/usr/bin/python -c "print \$memory >= $ml * 1000")
+  out=(\$(echo -e "\$out" | tail -n1));
+  time=\${out[0]}
+  memory=\${out[1]}
+  time_exceeded=\$(/usr/bin/python -c "print \$time >= $tl")
+  memory_exceeded=\$(/usr/bin/python -c "print \$memory >= $ml * 1000")
 
-    if [ "\$time_exceeded" == "True" ]; then
-      verdict="TIME_LIMIT_EXCEEDED"
-    elif [ "\$memory_exceeded" == "True" ]; then
-      verdict="MEMORY_LIMIT_EXCEEDED"
-    elif [ "\$status" -ne "0" ]; then
-      verdict="RUNTIME_ERROR"
-    else
-      diff=\$(diff -wB main.out ans.out)
-      if [ "\$?" -eq "0" ]; then
-        verdict="OK"
-      else
-        verdict="WRONG_ANSWER"
-      fi
-    fi
+  if [ "\$time_exceeded" == "True" ]; then
+    verdict="TIME_LIMIT_EXCEEDED"
+  elif [ "\$memory_exceeded" == "True" ]; then
+    verdict="MEMORY_LIMIT_EXCEEDED"
+  elif [ "\$status" -ne "0" ]; then
+    verdict="RUNTIME_ERROR"
   else
-    verdict="COMPILATION_ERROR"
+    diff=\$(diff -wB main.out ans.out)
+    if [ "\$?" -eq "0" ]; then
+      verdict="OK"
+    else
+      verdict="WRONG_ANSWER"
+    fi
   fi
 
-  echo -e "{
-  \"time\" : "\"\$time\s\"",
-  \"memory\" : "\"\$memory\K\B\"",
-  \"exit_code\" : \"\$status\",
+  echo "{\n
+  \"time\" : "\"\$time"s\",\n
+  \"memory\" : "\"\$memory"KB\",\n
+  \"exit_code\" : \"\$status\",\n
   \"verdict\" : \"\$verdict\"\n}"
 
 EOF
 )
 
 
-container_id=$(docker run -m "$ml"m -w $container_dir -d -v $host_dir:$container_dir debian-testing bash -c "eval $commands")
-exit_code=$(timeout "$max_run_time" docker wait "$container_id" || true)
 running=$(docker inspect --format="{{ .State.Running }}" "$container_id" 2> /dev/null)
-
-if [ "$running" == "true" ]; then
-  docker kill $cid &> /dev/null
-
-  echo -e "{
-  \"time\" : "\"$tl\s\"",
-  \"memory\" : \"0KB\",
-  \"exit_code\" : \"-1\",
-  \"verdict\" : \"TIME_LIMIT_EXCEEDED\"\n}"
-else
-  docker logs $container_id
+if [ "$running" != "true" ]; then
+  echo "Error: container '$container_id' is not running"
+  exit 1
 fi
 
-docker rm -f $container_id &> /dev/null
+output=$(timeout $tl docker exec "$container_id" bash -c "$commands" || true)
+
+if [ "$output" == "" ]; then
+  file="/sys/fs/cgroup/memory/docker/$container_id/memory.usage_in_bytes"
+  memory_KB="0"
+
+  if [ -e $file ]; then
+    memory=$(cat $file)
+    memory_KB=$(echo "$memory  / 1000" | bc)
+  fi
+
+  echo -e "{
+  \"time\" : \""$tl"s\",
+  \"memory\" : \""$memory_KB"KB\",
+  \"exit_code\" : \"0\",
+  \"verdict\" : \"TIME_LIMIT_EXCEEDED\"\n}"
+else
+  echo -e $output
+fi

@@ -1,0 +1,8 @@
+{
+  "memory_limit": "250",
+  "time_limit": "3.5",
+  "compilation": "/usr/bin/g++ -o2 -static -pipe -o source source.cpp",
+  "execution": "./source < main.in > main.out",
+  "work_directory": "/tmp/run",
+  "volumen": "/<absolute path>/judge-bot/run1"
+}
