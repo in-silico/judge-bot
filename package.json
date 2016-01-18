@@ -1,0 +1,27 @@
+{
+  "name": "judge-bot",
+  "version": "1.0.0",
+  "description": "Judging system for UTPJudge project",
+  "main": "run.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/in-silico/judge-bot.git"
+  },
+  "keywords": [
+    "judgebot",
+    "programming",
+    "contest"
+  ],
+  "author": "in-silico",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/in-silico/judge-bot/issues"
+  },
+  "homepage": "https://github.com/in-silico/judge-bot#readme"
+}
