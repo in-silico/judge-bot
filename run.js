@@ -1,4 +1,5 @@
 var exec = require('child_process').exec;
+var fs = require('fs');
 var data = require('./data.json');
 
 var launch_params = '-m ' + data.memory_limit + 'm -w ' + data.work_directory + ' -v ' +
@@ -15,20 +16,53 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
             function(error, stdout, stderr) {
 
               if (error === null) {
-                var judge_params = data.time_limit + ' ' + data.memory_limit +
-                                   ' ' + container_id + ' "' + data.execution + '"';
+                fs.readdir(data.volumen, function(err, files) {
+                  if (err) {
+                    console.log('error: ', err);
+                    process.exit(4);
+                  }
 
-                var judge = exec('./judge.sh ' + judge_params,
-                  function(error, stdout, stderr) {
+                  process_submit(0);
 
-                    if (error === null) {
-                      console.log(stdout);
-                    }
+                  function is_numeric(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
+                  }
+
+                  function process_submit(i) {
+                    if (i >= files.length) return 0;
                     else {
-                      console.log("judge error: ", error);
-                      process.exit(3);
-                    }
-                  });
+                      if (files[i] && typeof files[i].split == 'function') {
+                        var f = files[i].split('.');
+                        if (f[0] === 'in' && is_numeric(f[1])) {
+                          var execution = data.execution.replace('main.in', files[i]);
+                          execution = execution.replace('main.out', 'other.' + f[1]);
+
+                          var judge_params = data.time_limit + ' ' + data.memory_limit + ' ' +
+                                            container_id + ' ' + f[1] + ' "' + execution + '"';
+
+                          var judge = exec('./judge.sh ' + judge_params,
+                            function(error, stdout, stderr) {
+
+                              if (error === null) {
+                                console.log(stdout);
+                                process_submit(i + 1);
+                              }
+                              else {
+                                console.log("judge error: ", error);
+                                process.exit(3);
+                              }
+                            });
+                        }
+                        else {
+                          process_submit(i + 1);
+                        }
+                      }
+                      else {
+                        process_submit(i + 1);
+                      }
+                  }
+                  }
+                });
 
               }
               else {

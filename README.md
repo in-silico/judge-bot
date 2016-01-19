@@ -47,6 +47,8 @@ docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
 
 ```
 
+**Test cases**: each test case needs files **in.x** and **out.x** respectively input file and expected output file, where **x** is the test case number.
+
 
 ```sh
 node run.js
@@ -55,10 +57,11 @@ node run.js
 Output example in JSON format
 ```console
 {
-  "time" : "3.19s",
-  "memory" : "255104KB",
-  "exit_code" : "0",
-  "verdict" : "MEMORY_LIMIT_EXCEEDED"
+ "test_case" : "3",
+ "time" : "0.26s",
+ "memory" : "132536KB",
+ "exit_code" : "0",
+ "verdict" : "OK"
 }
 ```
 
