@@ -49,6 +49,7 @@ commands=$(cat << EOF
   fi
 
   echo "{\n
+  \"test_case\" : \"$test_case\",\n
   \"time\" : "\"\$time"s\",\n
   \"memory\" : "\"\$memory"KB\",\n
   \"exit_code\" : \"\$status\",\n
@@ -76,6 +77,7 @@ if [ "$output" == "" ]; then
   fi
 
   echo -e "{
+  \"test_case\" : \"$test_case\",
   \"time\" : \""$tl"s\",
   \"memory\" : \""$memory_KB"KB\",
   \"exit_code\" : \"0\",
