@@ -11,8 +11,6 @@ Requirements/Dependencies
 
 - [ZeroMQ](http://zeromq.org/)
 
-
-Discussion in progress 
 - [Docker](https://www.docker.com/)
 
 
