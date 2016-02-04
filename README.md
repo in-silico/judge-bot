@@ -1,4 +1,4 @@
-# judge-bot
+# UTPJudge-bot
 ==========
 
 Judging system for UTPJudge project, this project will be connected
@@ -120,5 +120,6 @@ The project is released under the MPLv2 license.
 Please see LICENSE for full details.
 
 _______
+<p align="center"><img src="https://cloud.githubusercontent.com/assets/14989202/11768037/94347c26-a18e-11e5-84ad-a8554c9fe75d.png" width=110px></img></p>
 
-Developed by In-silico.
+<p align="center">Developed by In-silico.</p>
