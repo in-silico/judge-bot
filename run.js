@@ -18,19 +18,21 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
               if (error === null) {
 
                 function check(checker, callback) {
+                  var f = checker.split('.');
+                  var name = f[0];
 
-                  fs.stat(checker + '.cpp', function(err, stats) {
+                  fs.stat(checker, function(err, stats) {
                     if (!err && stats.isFile()) {
 
-                        fs.stat(checker, function(err, stats) {
+                        fs.stat(name, function(err, stats) {
                           if (!err && stats.isFile()) {
                             callback();
                           }
                           else {
-                            var cmd = '/usr/bin/g++ ' + checker + '.cpp -o ' + checker;
+                            var cmd = '/usr/bin/g++ ' + checker + ' -o ' + name;
                             var cmp = exec(cmd, function(error, stdout, stderr) {
                               if (error) {
-                                console.log('Error: compilation error of ' + checker + '.cpp');
+                                console.log('Error: compilation error of ' + checker);
                                 console.log(stderr);
                                 process.exit(6);
                               }
@@ -41,7 +43,7 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
 
                     }
                     else {
-                      console.log('Error: file ' + checker + '.cpp not found!');
+                      console.log('Error: file ' + checker + ' not found!');
                       if (err) console.log(err);
                       process.exit(5);
                     }
@@ -68,7 +70,7 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
                             execution = execution.replace('main.out', f[0] + '.other');
 
                             var judge_params = data.time_limit + ' ' + data.memory_limit + ' ' +
-                              container_id + ' ' + f[0] + ' ' + data.checker +
+                              container_id + ' ' + f[0] + ' ' + data.checker.split('.')[0] +
                               ' "' + execution + '"';
 
                             var judge = exec('./judge.sh ' + judge_params,
