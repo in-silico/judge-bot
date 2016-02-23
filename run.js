@@ -33,12 +33,12 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
                     else {
                       if (files[i] && typeof files[i].split == 'function') {
                         var f = files[i].split('.');
-                        if (f[0] === 'in' && is_numeric(f[1])) {
+                        if (f[1] === 'in') {
                           var execution = data.execution.replace('main.in', files[i]);
-                          execution = execution.replace('main.out', 'other.' + f[1]);
+                          execution = execution.replace('main.out', f[0] + '.other');
 
                           var judge_params = data.time_limit + ' ' + data.memory_limit + ' ' +
-                                            container_id + ' ' + f[1] + ' "' + execution + '"';
+                                            container_id + ' ' + f[0] + ' "' + execution + '"';
 
                           var judge = exec('./judge.sh ' + judge_params,
                             function(error, stdout, stderr) {

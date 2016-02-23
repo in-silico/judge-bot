@@ -40,7 +40,7 @@ commands=$(cat << EOF
   elif [ "\$status" -ne "0" ]; then
     verdict="RUNTIME_ERROR"
   else
-    diff=\$(diff -wB out.$test_case other.$test_case)
+    diff=\$(diff -wB $test_case".out" $test_case".other")
     if [ "\$?" -eq "0" ]; then
       verdict="OK"
     else
