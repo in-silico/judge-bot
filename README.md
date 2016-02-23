@@ -39,6 +39,7 @@ docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
   "time_limit": "3.5",
   "compilation": "/usr/bin/g++ -o2 -static -pipe -o source source.cpp",
   "execution": "./source < main.in > main.out",
+  "checker": "checker.cpp",
   "work_directory": "/tmp/run",
   "volumen": "/<absolute path>/judge-bot/run1"
 }
@@ -47,6 +48,11 @@ docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
 
 **Test cases**: each test case needs files **\*.in** and **\*.out** respectively input file and expected output file, where **'\*'** is the test case name.
 
+**Checker**: is a file in C++ used to check the contestant output, here you can include the logic for special judge. This file receives two parameters, the names of files for contestant output and correct output.
+
+**Note**: This file is MANDATORY and must be placed in directory **volumen**, the name of this file is passed in **checker** field of data.json, including extension **.cpp**
+
+Example: [checker.cpp](https://github.com/in-silico/judge-bot/blob/master/run1/checker.cpp)
 
 ```sh
 node run.js
