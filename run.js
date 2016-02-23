@@ -24,10 +24,6 @@ var launch_container = exec('./launch_container.sh ' + launch_params,
 
                   process_submit(0);
 
-                  function is_numeric(n) {
-                    return !isNaN(parseFloat(n)) && isFinite(n);
-                  }
-
                   function process_submit(i) {
                     if (i >= files.length) return 0;
                     else {
