@@ -2,7 +2,7 @@
 
 # Usage: execute submission and return verdict in json format
 #
-# ./judge.sh tl ml container_id test_case execution_commands
+# ./judge.sh tl ml container_id test_case checker execution_commands
 
 
 tl=$1
@@ -15,6 +15,9 @@ container_id=$1
 shift
 
 test_case=$1
+shift
+
+checker=$1
 shift
 
 execution=$@
@@ -40,7 +43,7 @@ commands=$(cat << EOF
   elif [ "\$status" -ne "0" ]; then
     verdict="RUNTIME_ERROR"
   else
-    diff=\$(diff -wB $test_case".out" $test_case".other")
+    diff=\$(./$checker $test_case".out" $test_case".other")
     if [ "\$?" -eq "0" ]; then
       verdict="OK"
     else
