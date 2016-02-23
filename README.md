@@ -45,7 +45,7 @@ docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
 
 ```
 
-**Test cases**: each test case needs files **\*.in** and **\*.out** respectively input file and expected output file, where **x** is the test case number.
+**Test cases**: each test case needs files **\*.in** and **\*.out** respectively input file and expected output file, where **'\*'** is the test case name.
 
 
 ```sh
