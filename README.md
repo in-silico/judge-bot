@@ -48,7 +48,7 @@ docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
 
 **Test cases**: each test case needs files **\*.in** and **\*.out** respectively input file and expected output file, where **'\*'** is the test case name.
 
-**Checker**: is a file in C++ used to check the contestant output, here you can include the logic for special judge. This file receives two parameters, the names of files for contestant output and correct output.
+**Checker**: is a file in C++ used to check the contestant output, here you can include the logic for special judge. This file receives three parameters, the names of files for input file, correct output and contestant output.
 
 **Note**: This file is MANDATORY and must be placed in directory **volumen**, the name of this file is passed in **checker** field of data.json, including extension **.cpp**
 
