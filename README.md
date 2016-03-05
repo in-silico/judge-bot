@@ -18,7 +18,8 @@ Installation
 ============
 
 ```sh
-$ addyour_command_here 
+$ cd judge-bot
+$ npm install 
 ```
 
 Running judge
@@ -84,7 +85,7 @@ docker run -it 'judge'
 
 For download a pre-built image
 ```sh
-docker pull jhonber/debian
+docker pull jhonber/judge-bot
 ```
 
 If everything went ok you will see something like this
