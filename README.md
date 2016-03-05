@@ -28,10 +28,10 @@ Running judge
 docker build -t 'debian-testing'
 
 # or download pre-build image and tagged
-docker pull jhonber/debian && docker tag -f jhonber/debian debian-testing
+docker pull jhonber/judge-bot && docker tag -f jhonber/judge-bot debian-testing
 ```
 
-**data.json** configuration: change **\<absolute path\>**
+**data.json** configuration: change (location of repository) **\<absolute path\>**
 
 ```javascript
 {
