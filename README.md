@@ -18,20 +18,24 @@ Installation
 ============
 
 ```sh
+$ git clone https://github.com/in-silico/judge-bot.git
 $ cd judge-bot
 $ npm install 
 ```
 
-Running judge
+Building image
 ===========
 ```sh
 # build image
-docker build -t 'debian-testing'
+$ cd debian
+$ docker build -t 'debian-testing'
 
 # or download pre-build image and tagged
-docker pull jhonber/judge-bot && docker tag -f jhonber/judge-bot debian-testing
+$ docker pull jhonber/judge-bot && docker tag -f jhonber/judge-bot debian-testing
 ```
 
+Configuration
+===========
 **data.json** configuration: change (location of repository) **\<absolute path\>**
 
 ```javascript
@@ -55,8 +59,10 @@ docker pull jhonber/judge-bot && docker tag -f jhonber/judge-bot debian-testing
 
 Example: [checker.cpp](https://github.com/in-silico/judge-bot/blob/master/run1/checker.cpp)
 
+Running judge
+===========
 ```sh
-node run.js
+$ node run.js
 ```
 
 Output example in JSON format
