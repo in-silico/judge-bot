@@ -1,0 +1,26 @@
+{
+  "name": "judge-bot",
+  "version": "1.0.0",
+  "description": "==========",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "postinstall": "mkdir -p data && mkdir -p data/submissions && mkdir -p data/problems",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/in-silico/judge-bot.git"
+  },
+  "author": "Manuel Pineda <manuel.felipe.pineda@gmail.com> (http://github.com/pin3da)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/in-silico/judge-bot/issues"
+  },
+  "homepage": "https://github.com/in-silico/judge-bot#readme",
+  "dependencies": {
+    "node-uuid": "^1.4.7"
+  }
+}
