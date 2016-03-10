@@ -108,6 +108,12 @@ javac -version
 ```
 
 
+## Bot API.
+
+The full API to connect to backend is defined [here](https://github.com/in-silico/judge-backend/blob/file-sync/README.md#bot-api)
+
+**TODO: Change link after merge**
+
 Contributing
 ============
 
