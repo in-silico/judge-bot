@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "postinstall": "mkdir -p data && mkdir -p data/submissions && mkdir -p data/problems && mkdir -p data/runs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +24,10 @@
   "bugs": {
     "url": "https://github.com/in-silico/judge-bot/issues"
   },
-  "homepage": "https://github.com/in-silico/judge-bot#readme"
+  "homepage": "https://github.com/in-silico/judge-bot#readme",
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "node-uuid": "^1.4.7",
+    "path": "^0.12.7"
+  }
 }
