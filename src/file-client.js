@@ -3,6 +3,7 @@ var net = require('net');
 var path = require('path');
 var EventEmitter = require('events').EventEmitter;
 var uuid = require('node-uuid');
+var judge = require('../judge.js');
 
 module.exports = JClient;
 
@@ -89,6 +90,7 @@ JClient.prototype.handleData = function(data) {
     if (op === 'submission') {
       var info = cur[1];
       var files = [info.path];
+      files.push(info.checker);
       for (var i = 0; i < info.testcases.length; ++i) {
         files.push(info.testcases[i].in);
         files.push(info.testcases[i].out);
@@ -110,6 +112,9 @@ JClient.prototype.handleData = function(data) {
 
 JClient.prototype.judge = function(data) {
   console.log('judging', data);
-  var ans = ['judgement', {_id: data._id, verdict: 'accepted'}];
-  self.client.write(JSON.stringify(ans))
+//  var ans = ['judgement', {_id: data._id, verdict: 'accepted'}];
+  var verdict = judge(data, function (verdict) {
+    var ans = ['judgement', verdict];
+    self.client.write(JSON.stringify(ans))
+  });
 }
