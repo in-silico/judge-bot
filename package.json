@@ -1,8 +1,8 @@
 {
   "name": "judge-bot",
   "version": "1.0.0",
-  "description": "==========",
-  "main": "index.js",
+  "description": "Judging system for UTPJudge project",
+  "main": "run.js",
   "directories": {
     "test": "test"
   },
@@ -14,8 +14,13 @@
     "type": "git",
     "url": "git+https://github.com/in-silico/judge-bot.git"
   },
-  "author": "Manuel Pineda <manuel.felipe.pineda@gmail.com> (http://github.com/pin3da)",
-  "license": "ISC",
+  "keywords": [
+    "judgebot",
+    "programming",
+    "contest"
+  ],
+  "author": "in-silico",
+  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/in-silico/judge-bot/issues"
   },
