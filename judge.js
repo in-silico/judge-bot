@@ -4,23 +4,22 @@ var path = require('path');
 var mkdirp = require('mkdirp');
 var work_directory = '/tmp/run';
 
-
 var container_id;
 
 module.exports = function(data, cb) {
-  var cur_dir = path.dirname(process.cwd()) + '/';
+  var cur_dir = __dirname + '/';
   data.volumen = cur_dir + data.volumen;
   data.runs = cur_dir + data.runs;
   data.path = cur_dir + data.path;
   data.checker = path.basename(data.checker);
+  var sub_id = data._id;
 
   function prepare_data(data, cb) {
-    var sub_id = path.basename(data.path);
     var run_dir = data.runs + '/' + sub_id;
 
     mkdirp(run_dir, function(err) {
       if (!err) {
-        var cm = 'cp ' + data.volumen + '/* ' + run_dir;
+        var cm = 'cp -r ' + data.volumen + '/* ' + run_dir;
         exec(cm, function(error, stdout, stderr) {
           if (!error) {
             var cm2 = 'cp ' + data.path + ' ' + run_dir + '/Main.' + data.extension;
@@ -55,12 +54,12 @@ module.exports = function(data, cb) {
     var launch_params = '-m ' + data.memory_limit + 'm -w ' + work_directory + ' -v ' +
                        run_dir + ':' + work_directory;
 
-    var launch_container = exec('../launch_container.sh ' + launch_params,
+    var launch_container = exec('./launch_container.sh ' + launch_params,
           function(error, stdout, stderr) {
             if (error === null) {
               container_id = stdout.split('\n')[0];
-              var compile_params = container_id +' ' + data.compilation;
-              var compile = exec('../compile_in_container.sh ' + compile_params,
+              var compile_params = container_id + ' ' + data.compilation;
+              var compile = exec('./compile_in_container.sh ' + compile_params,
                 function(error, stdout, stderr) {
 
                   if (error === null) {
