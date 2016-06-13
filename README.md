@@ -76,8 +76,6 @@ Output example in JSON format
 }
 ```
 
-
-
 Running images
 ==============
 
@@ -113,6 +111,31 @@ javac -version
 The full API to connect to backend is defined [here](https://github.com/in-silico/judge-backend/blob/file-sync/README.md#bot-api)
 
 **TODO: Change link after merge**
+
+The submissions must follow the below schema:
+
+```javascript
+var data = {
+  _id: "string",
+  path: "string",           // path to the submission
+  volumen: "string",        // path to testcases
+  runs: "string",           // default to 'data/runs'
+  memory_limit: "string",   // maximum allowed memory
+  time_limit: "string",     // maximum exection time
+  compilation: "string",    // compilation line
+  execution: "string",      // execution time
+  extension: "string",      // program extension (cpp, cc, java, etc)
+  checker: "string",        // path to checker
+  testcases: [              // array with several test cases in this format
+    {
+      _id: "string"
+      input: "string",
+      output: "string"
+    }
+  ]
+}
+```
+
 
 Contributing
 ============
