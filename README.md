@@ -121,7 +121,7 @@ var data = {
   volumen: "string",        // path to testcases
   runs: "string",           // default to 'data/runs'
   memory_limit: "string",   // maximum allowed memory
-  time_limit: "string",     // maximum exection time
+  time_limit: "string",     // maximum execution time
   compilation: "string",    // compilation line
   execution: "string",      // execution time
   extension: "string",      // program extension (cpp, cc, java, etc)
