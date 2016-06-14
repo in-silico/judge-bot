@@ -11,7 +11,7 @@ module.exports = {
 
     mkdirp(run_dir, function(err) {
       if (!err) {
-        var cm = 'cp ' + data.volumen + '/* ' + run_dir;
+        var cm = 'cp -r ' + data.volumen + '/* ' + run_dir;
         exec(cm, function(error, stdout, stderr) {
           if (!error) {
             var cm2 = 'cp ' + data.path + ' ' + run_dir + '/Main.' + data.extension;
