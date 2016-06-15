@@ -13,4 +13,3 @@ for D in tests/*; do
   fi
 done
 
-
