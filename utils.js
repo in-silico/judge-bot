@@ -3,35 +3,43 @@ var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 
+var cur_dir = __dirname + '/';
+
 module.exports = {
 
-  prepare_judge_data: function(data, cb) {
-    var sub_id = path.basename(data.path);
-    var run_dir = data.runs + '/' + sub_id;
+  prepare_judge_data: function (data, cb) {
+    var sub_id = data._id;
+    var run_dir = data.runs + sub_id;
+    var testcases = data.testcases;
 
-    mkdirp(run_dir, function(err) {
+    mkdirp(run_dir, function (err) {
       if (!err) {
-        var cm = 'cp ' + data.volumen + '/* ' + run_dir;
-        exec(cm, function(error, stdout, stderr) {
+        var checker = data.volumen + '/' + data.checker;
+        var cmd = 'cp ' + data.path + ' ' + run_dir + '/Main' + data.extension +
+          '; cp ' + checker + ' ' + run_dir + '/' + data.checker + '.cpp';
+        exec(cmd, function (error, stdout, stderr) {
           if (!error) {
-            var cm2 = 'cp ' + data.path + ' ' + run_dir + '/Main.' + data.extension;
-            exec(cm2, function(error, stdout, stderr) {
-              if (!error) {
-                cb(run_dir);
-              }
-              else {
-                console.log("Error: preparing data. Command " + cm2);
-                console.log(error);
-                process.exit(7);
-              }
-            });
+            cb(run_dir);
           }
           else {
-            console.log("Error: preparing data. Command " + cm);
+            console.log("Error: preparing data. Command " + cmd);
             console.log(error);
             process.exit(7);
           }
         });
+
+        for (var i = 0; i < testcases.length; ++i) {
+          var input = data.volumen + '/' + testcases[i].input;
+          var output = data.volumen + '/' + testcases[i].output;
+          var cmd = 'cp ' + input + ' ' + output + ' ' + run_dir;
+          exec(cmd, function (error, stdout, stderr) {
+            if (error) {
+              console.log("Error: preparing data. Command " + cmd);
+              console.log(error);
+              process.exit(7);
+            }
+          });
+        }
       }
       else {
         console.log("Error: preparing data");
@@ -41,30 +49,19 @@ module.exports = {
     });
   },
 
-  exist_checker: function (checker, callback) {
-    var f = checker.split('.');
-    var name = f[0];
+  exist_checker: function (checker,  callback) {
 
-    fs.stat(checker, function(err, stats) {
+    fs.stat(checker + '.cpp', function (err, stats) {
       if (!err && stats.isFile()) {
-
-        fs.stat(name, function(err, stats) {
-          if (!err && stats.isFile()) {
-            callback();
+        var cmd = '/usr/bin/g++ ' + checker + '.cpp -o ' + checker;
+        var cmp = exec(cmd, function (error, stdout, stderr) {
+          if (error) {
+            console.log('Error: compilation error of ' + checker);
+            console.log(stderr);
+            process.exit(6);
           }
-          else {
-            var cmd = '/usr/bin/g++ ' + checker + ' -o ' + name;
-            var cmp = exec(cmd, function(error, stdout, stderr) {
-              if (error) {
-                console.log('Error: compilation error of ' + checker);
-                console.log(stderr);
-                process.exit(6);
-              }
-              callback();
-            });
-          }
+          callback();
         });
-
       }
       else {
         console.log('Error: file ' + checker + ' not found!');
@@ -74,17 +71,7 @@ module.exports = {
     });
   },
 
-  get_files: function(path, cb) {
-    fs.readdir(path, function(err, files) {
-      if (err) {
-        console.log('error: ', err);
-        process.exit(4);
-      }
-      cb(files);
-    });
-  },
-
-  process_submit: function(data, files, container_id, cb) {
+  process_submit: function (data, files, container_id, cb) {
     var verdict = [];
 
     process(0);
@@ -94,37 +81,29 @@ module.exports = {
         return cb(verdict);
       }
       else {
-        if (files[i] && typeof files[i].split == 'function') {
-          var f = files[i].split('.');
-          if (f[1] === 'in') {
-            var execution = data.execution.replace('main.in', files[i]);
-            execution = execution.replace('main.out', f[0] + '.other');
+        var input  = files[i].input;
+        var output = files[i].output;
 
-            var judge_params = data.time_limit + ' ' + data.memory_limit + ' ' +
-              container_id + ' ' + f[0] + ' ' + data.checker.split('.')[0] +
-              ' "' + execution + '"';
+          var execution = data.execution.replace('main.in', input);
+          execution = execution.replace('main.out', input + '.out');
 
-            var judge = exec('../judge.sh ' + judge_params,
-                             function(error, stdout, stderr) {
+          var judge_params = data.time_limit + ' ' + data.memory_limit +
+            ' ' + container_id + ' ' + input + ' ' + output + ' ' +
+            data.checker.split('.')[0] + ' "' + execution + '"';
 
-                               if (error === null) {
-                                 var v = JSON.parse(stdout);
-                                 verdict.push(v);
-                                 process(i + 1);
-                               }
-                               else {
-                                 console.log("judge error: ", error);
-                                 process.exit(3);
-                               }
-                             });
-          }
-          else {
-            process(i + 1);
-          }
-        }
-        else {
-          process(i + 1);
-        }
+          var judge = exec(cur_dir + './judge.sh ' + judge_params,
+                           function (error, stdout, stderr) {
+
+                             if (error === null) {
+                               var v = JSON.parse(stdout);
+                               verdict.push(v);
+                               process(i + 1);
+                             }
+                             else {
+                               console.log("judge error: ", error);
+                               process.exit(3);
+                             }
+                           });
       }
     }
   }

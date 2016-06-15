@@ -2,7 +2,7 @@
 
 # Usage: execute submission and return verdict in json format
 #
-# ./judge.sh tl ml container_id test_case checker execution_commands
+# ./judge.sh tl ml container_id input output checker execution_commands
 
 
 tl=$1
@@ -14,7 +14,10 @@ shift
 container_id=$1
 shift
 
-test_case=$1
+input=$1
+shift
+
+output=$1
 shift
 
 checker=$1
@@ -43,7 +46,7 @@ commands=$(cat << EOF
   elif [ "\$status" -ne "0" ]; then
     verdict="RUNTIME_ERROR"
   else
-    diff=\$(./$checker $test_case".in" $test_case".out" $test_case".other")
+    diff=\$(./$checker $input $output $input".out")
     if [ "\$?" -eq "0" ]; then
       verdict="OK"
     else
@@ -52,7 +55,7 @@ commands=$(cat << EOF
   fi
 
   echo "{\n
-  \"test_case\" : \"$test_case\",\n
+  \"test_case\" : \"$input\",\n
   \"time\" : "\"\$time"s\",\n
   \"memory\" : "\"\$memory"KB\",\n
   \"exit_code\" : \"\$status\",\n
@@ -68,9 +71,9 @@ if [ "$running" != "true" ]; then
   exit 1
 fi
 
-output=$(timeout $tl docker exec "$container_id" bash -c "$commands" || true)
+out=$(timeout $tl docker exec "$container_id" bash -c "$commands" || true)
 
-if [ "$output" == "" ]; then
+if [ "$out" == "" ]; then
   file="/sys/fs/cgroup/memory/docker/$container_id/memory.usage_in_bytes"
   memory_KB="0"
 
@@ -80,11 +83,11 @@ if [ "$output" == "" ]; then
   fi
 
   echo -e "{
-  \"test_case\" : \"$test_case\",
+  \"test_case\" : \"$input\",
   \"time\" : \""$tl"s\",
   \"memory\" : \""$memory_KB"KB\",
   \"exit_code\" : \"0\",
   \"verdict\" : \"TIME_LIMIT_EXCEEDED\"\n}"
 else
-  echo -e $output
+  echo -e $out
 fi
