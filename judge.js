@@ -8,8 +8,6 @@ module.exports = function (data, cb) {
   data.volumen = cur_dir + data.volumen;
   data.runs = cur_dir + data.runs;
   data.path = cur_dir + data.path;
-  data.checker = path.basename(data.checker);
-
 
   utils.prepare_judge_data(data, function (run_dir) {
 
@@ -24,8 +22,8 @@ module.exports = function (data, cb) {
               var compile = exec(cur_dir + 'compile_in_container.sh ' + compile_params,
                 function (error, stdout, stderr) {
                   if (error === null) {
-
-                    var path_checker = run_dir + '/' + data.checker;
+                    var name = path.basename(data.checker);
+                    var path_checker = run_dir + '/' + name;
                     utils.exist_checker(path_checker, function () {
                       var files = data.testcases;
                         utils.process_submit(data, files, container_id,

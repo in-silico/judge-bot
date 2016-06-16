@@ -14,9 +14,9 @@ module.exports = {
 
     mkdirp(run_dir, function (err) {
       if (!err) {
-        var checker = data.volumen + '/' + data.checker;
+        var name = path.basename(data.checker);
         var cmd = 'cp ' + data.path + ' ' + run_dir + '/Main' + data.extension +
-          '; cp ' + checker + ' ' + run_dir + '/' + data.checker + '.cpp';
+          '; cp ' + data.checker + ' ' + run_dir + '/' + name + '.cpp';
         exec(cmd, function (error, stdout, stderr) {
           if (!error) {
             cb(run_dir);
@@ -29,8 +29,11 @@ module.exports = {
         });
 
         for (var i = 0; i < testcases.length; ++i) {
-          var input = data.volumen + '/' + testcases[i].input;
-          var output = data.volumen + '/' + testcases[i].output;
+          var inp = path.basename(testcases[i].input);
+          var out = path.basename(testcases[i].output);
+
+          var input = data.volumen + '/' + inp;
+          var output = data.volumen + '/' + out;
           var cmd = 'cp ' + input + ' ' + output + ' ' + run_dir;
           exec(cmd, function (error, stdout, stderr) {
             if (error) {
@@ -49,14 +52,14 @@ module.exports = {
     });
   },
 
-  exist_checker: function (checker,  callback) {
-
-    fs.stat(checker + '.cpp', function (err, stats) {
+  exist_checker: function (checker, callback) {
+    var checker2 = checker + '.cpp'
+    fs.stat(checker2, function (err, stats) {
       if (!err && stats.isFile()) {
-        var cmd = '/usr/bin/g++ ' + checker + '.cpp -o ' + checker;
+        var cmd = '/usr/bin/g++ ' + checker2 + ' -o ' + checker;
         var cmp = exec(cmd, function (error, stdout, stderr) {
           if (error) {
-            console.log('Error: compilation error of ' + checker);
+            console.log('Error: compilation error of ' + checker2);
             console.log(stderr);
             process.exit(6);
           }
@@ -64,7 +67,7 @@ module.exports = {
         });
       }
       else {
-        console.log('Error: file ' + checker + ' not found!');
+        console.log('Error: file ' + checker2 + ' not found!');
         if (err) console.log(err);
         process.exit(5);
       }
@@ -81,29 +84,30 @@ module.exports = {
         return cb(verdict);
       }
       else {
-        var input  = files[i].input;
-        var output = files[i].output;
+        var input  = path.basename(files[i].input);
+        var output = path.basename(files[i].output);
+        var checker = path.basename(data.checker);
 
-          var execution = data.execution.replace('main.in', input);
-          execution = execution.replace('main.out', input + '.out');
+        var execution = data.execution.replace('main.in', input);
+        execution = execution.replace('main.out', input + '.out');
 
-          var judge_params = data.time_limit + ' ' + data.memory_limit +
-            ' ' + container_id + ' ' + input + ' ' + output + ' ' +
-            data.checker.split('.')[0] + ' "' + execution + '"';
+        var judge_params = data.time_limit + ' ' + data.memory_limit +
+          ' ' + container_id + ' ' + input + ' ' + output + ' ' +
+          checker + ' "' + execution + '"';
 
-          var judge = exec(cur_dir + './judge.sh ' + judge_params,
-                           function (error, stdout, stderr) {
+        var judge = exec(cur_dir + './judge.sh ' + judge_params,
+                         function (error, stdout, stderr) {
 
-                             if (error === null) {
-                               var v = JSON.parse(stdout);
-                               verdict.push(v);
-                               process(i + 1);
-                             }
-                             else {
-                               console.log("judge error: ", error);
-                               process.exit(3);
-                             }
-                           });
+                           if (error === null) {
+                             var v = JSON.parse(stdout);
+                             verdict.push(v);
+                             process(i + 1);
+                           }
+                           else {
+                             console.log("judge error: ", error);
+                             process.exit(3);
+                           }
+                         });
       }
     }
   }
