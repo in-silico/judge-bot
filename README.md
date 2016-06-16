@@ -34,48 +34,6 @@ $ docker build -t 'debian-testing'
 $ docker pull jhonber/judge-bot && docker tag -f jhonber/judge-bot debian-testing
 ```
 
-Configuration
-===========
-**data.json** configuration: change (location of repository) **\<absolute path\>**
-
-```javascript
-{
-  "memory_limit": "250",
-  "time_limit": "3.5",
-  "compilation": "/usr/bin/g++ -o2 -static -pipe -o source source.cpp",
-  "execution": "./source < main.in > main.out",
-  "checker": "checker.cpp",
-  "work_directory": "/tmp/run",
-  "volumen": "/<absolute path>/judge-bot/run1"
-}
-
-```
-
-**Test cases**: each test case needs files **\*.in** and **\*.out** respectively input file and expected output file, where **'\*'** is the test case name.
-
-**Checker**: is a file in C++ used to check the contestant output, here you can include the logic for special judge. This file receives three parameters, the names of files for input file, correct output and contestant output. The exit code of this file is the verdict, 0 means Accepted and other code means Wrong Answer.
-
-**Note**: This file is MANDATORY and must be placed in directory **volumen**, the name of this file is passed in **checker** field of data.json, including extension **.cpp**
-
-Example: [checker.cpp](https://github.com/in-silico/judge-bot/blob/master/run1/checker.cpp)
-
-Running judge
-===========
-```sh
-$ node run.js
-```
-
-Output example in JSON format
-```console
-{
- "test_case" : "3",
- "time" : "0.26s",
- "memory" : "132536KB",
- "exit_code" : "0",
- "verdict" : "OK"
-}
-```
-
 Running images
 ==============
 
@@ -105,6 +63,59 @@ g++ --version
 javac -version
 ```
 
+Judging
+===========
+## Requirements
+
+**Checker**: is a file in C++ used to check the contestant output, here you can include the logic for special judge. This file receives three parameters, the names of files for input file, correct output and contestant output. The exit code of this file is the verdict, 0 means Accepted and other code means Wrong Answer.
+
+Example: [checker.cpp](https://github.com/in-silico/judge-bot/blob/master/run1/checker.cpp)
+
+## Using judge module
+
+The judge is a module contained in ```judge.js``` file, this module receives an object with whole information needed to judging process, each field is described in the next section. The module returns other object which is the verdict for the submission.
+
+### Example of use
+
+```Javascript
+var judge = require('../judge.js');
+
+var data = {
+  _id: "1",
+  path: "run1/source",    // path to the submission
+  volumen: "run1",        // path to testcases
+  runs: "tmp_runs",       // default to 'data/runs'
+  memory_limit: "250",    // maximum allowed memory
+  time_limit: "3.5",      // maximum execution time
+  compilation: "/usr/bin/g++ -o2 -static -pipe -o Main Main.cpp", // compilation line
+  execution: "./Main < main.in > main.out",                       // execution line
+  extension: ".cpp",      // program extension (cpp, cc, java, etc)
+  checker: "run1/789",    // path to checker
+  testcases: [            // array with several test cases in this format
+    {
+      _id: "1",
+      input: "run1/123",
+      output: "run1/124"
+    },
+    {
+      _id: "2",
+      input: "run1/456",
+      output: "run1/457"
+    }
+  ]
+};
+
+var ans = judge(data, function (verdict) {
+  console.log(verdict)
+});
+```
+
+Testing judge
+=============
+
+```
+$ node test/test_judge.js
+```
 
 ## Bot API.
 
@@ -117,11 +128,11 @@ var data = {
   _id: "string",
   path: "string",           // path to the submission
   volumen: "string",        // path to testcases
-  runs: "string",           // default to 'data/runs'
+  runs: "string",           // path tof runs, default to 'data/runs'
   memory_limit: "string",   // maximum allowed memory
   time_limit: "string",     // maximum execution time
   compilation: "string",    // compilation line
-  execution: "string",      // execution time
+  execution: "string",      // execution line
   extension: "string",      // program extension (cpp, cc, java, etc)
   checker: "string",        // path to checker
   testcases: [              // array with several test cases in this format
