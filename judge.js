@@ -30,7 +30,7 @@ module.exports = function (data, cb) {
                           function (verdict) {
                             var stop_container = exec('docker kill ' +
                                                container_id + ' &> /dev/null');
-                            cb(verdict);
+                            cb({_id: data._id, verdict: verdict});
                         });
                       });
                   }

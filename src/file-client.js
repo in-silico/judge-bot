@@ -36,7 +36,7 @@ JClient.prototype.start = function(cb) {
   });
 
   self.client.on('error', function(err) {
-    console.log('connection error', err);
+    console.log('connection error');
   })
 }
 
@@ -117,8 +117,8 @@ JClient.prototype.judge = function(data) {
   self.client.write(JSON.stringify(ans));
   */
   var verdict = judge(data, function (verdict) {
-    console.log(verdict);
     var ans = ['judgement', verdict];
-    self.client.write(JSON.stringify(ans))
+    console.log('verdict from judge', ans);
+    self.client.write(JSON.stringify(ans) + '\0')
   });
 }
