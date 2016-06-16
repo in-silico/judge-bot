@@ -1,7 +1,7 @@
 var fs = require('fs');
 var net = require('net');
 var path = require('path');
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('events');
 var uuid = require('node-uuid');
 var judge = require('../judge.js');
 
@@ -12,7 +12,7 @@ function JClient(opts) {
   if (!(this instanceof JClient)) return new JClient(opts);
   if (!opts) opts = {}
   this._recTime = opts.recTime || 3;
-  this._dir = opts.dir || '../';
+  this._dir = opts.dir || './';
   this._id = uuid.v4();
   this._readyFiles = new EventEmitter();
   this._curDownload = {};
@@ -36,13 +36,13 @@ JClient.prototype.start = function(cb) {
   });
 
   self.client.on('error', function(err) {
-    console.log('connection error', err);
+    console.log('connection error');
   })
 }
 
 JClient.prototype.getFile = function(file, next) {
   var msg = ['file', file, self._id];
-  console.log('file', msg);
+
   var tmp = path.join(self._dir, file + self._id);
 
   function success() {
@@ -71,12 +71,13 @@ JClient.prototype.getFiles = function(files, id, data, cb) {
   }
 
   fs.stat(path.join(self._dir, files[id]), function(err, fstat) {
-    if (err)
+    if (err) {
       self.getFile(files[id], function() {
         return self.getFiles(files, id + 1, data, cb);
       })
-    else
+    } else {
       return self.getFiles(files, id + 1, data, cb);
+    }
   })
 
 }
@@ -92,8 +93,8 @@ JClient.prototype.handleData = function(data) {
       var files = [info.path];
       files.push(info.checker);
       for (var i = 0; i < info.testcases.length; ++i) {
-        files.push(info.testcases[i].in);
-        files.push(info.testcases[i].out);
+        files.push(info.testcases[i].input);
+        files.push(info.testcases[i].output);
       }
       self.getFiles(files, 0, info, self.judge)
     } else if (op === 'file') {
@@ -111,10 +112,13 @@ JClient.prototype.handleData = function(data) {
 }
 
 JClient.prototype.judge = function(data) {
-  console.log('judging', data);
-//  var ans = ['judgement', {_id: data._id, verdict: 'accepted'}];
+  /*
+  var ans = ['judgement', {_id: data._id, verdict: 'accepted'}];
+  self.client.write(JSON.stringify(ans));
+  */
   var verdict = judge(data, function (verdict) {
     var ans = ['judgement', verdict];
-    self.client.write(JSON.stringify(ans))
+    console.log('verdict from judge', ans);
+    self.client.write(JSON.stringify(ans) + '\0')
   });
 }
