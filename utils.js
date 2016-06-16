@@ -16,57 +16,58 @@ module.exports = {
       if (!err) {
         var name = path.basename(data.checker);
         var cmd = 'cp ' + data.path + ' ' + run_dir + '/Main' + data.extension +
-          '; cp ' + data.checker + ' ' + run_dir + '/' + name + '.cpp';
+          '&& cp ' + data.checker + ' ' + run_dir + '/' + name + '.cpp';
         exec(cmd, function (error, stdout, stderr) {
           if (!error) {
-            cb(run_dir);
+            process(0);
+
+            function process (i) {
+              if (i >= testcases.length) {
+                return cb(null, run_dir);
+              }
+              else {
+                var input = testcases[i].input;
+                var output = testcases[i].output;
+                var cmd = 'cp ' + input + ' ' + output + ' ' + run_dir;
+                exec(cmd, function (error, stdout, stderr) {
+                  if (error) {
+                    return cb(true, 1);
+                  }
+                  else {
+                    process(i + 1);
+                  }
+                });
+              }
+            }
+
           }
           else {
-            console.log("Error: preparing data. Command " + cmd);
-            console.log(error);
-            process.exit(7);
+            cb(true, 2);
           }
         });
-
-        for (var i = 0; i < testcases.length; ++i) {
-          var input = testcases[i].input;
-          var output = testcases[i].output;
-          var cmd = 'cp ' + input + ' ' + output + ' ' + run_dir;
-          exec(cmd, function (error, stdout, stderr) {
-            if (error) {
-              console.log("Error: preparing data. Command " + cmd);
-              console.log(error);
-              process.exit(7);
-            }
-          });
-        }
       }
       else {
-        console.log("Error: preparing data");
-        console.log(err);
-        process.exit(7);
+        cb(true, 3);
       }
     });
   },
 
-  exist_checker: function (checker, callback) {
+  exist_checker: function (checker, cb) {
     var checker2 = checker + '.cpp'
     fs.stat(checker2, function (err, stats) {
       if (!err && stats.isFile()) {
         var cmd = '/usr/bin/g++ ' + checker2 + ' -o ' + checker;
         var cmp = exec(cmd, function (error, stdout, stderr) {
           if (error) {
-            console.log('Error: compilation error of ' + checker2);
-            console.log(stderr);
-            process.exit(6);
+            cb(true, 4);
           }
-          callback();
+          else {
+            cb(null);
+          }
         });
       }
       else {
-        console.log('Error: file ' + checker2 + ' not found!');
-        if (err) console.log(err);
-        process.exit(5);
+        cb(true, 5);
       }
     });
   },
@@ -76,9 +77,9 @@ module.exports = {
 
     process(0);
 
-    function process(i) {
+    function process (i) {
       if (i >= files.length) {
-        return cb(verdict);
+        return cb(null, verdict);
       }
       else {
         var input  = path.basename(files[i].input);
@@ -101,8 +102,7 @@ module.exports = {
                              process(i + 1);
                            }
                            else {
-                             console.log("judge error: ", error);
-                             process.exit(3);
+                             cb(true, 6);
                            }
                          });
       }
