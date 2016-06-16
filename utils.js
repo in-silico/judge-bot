@@ -29,11 +29,8 @@ module.exports = {
         });
 
         for (var i = 0; i < testcases.length; ++i) {
-          var inp = path.basename(testcases[i].input);
-          var out = path.basename(testcases[i].output);
-
-          var input = data.volumen + '/' + inp;
-          var output = data.volumen + '/' + out;
+          var input = testcases[i].input;
+          var output = testcases[i].output;
           var cmd = 'cp ' + input + ' ' + output + ' ' + run_dir;
           exec(cmd, function (error, stdout, stderr) {
             if (error) {
