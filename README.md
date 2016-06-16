@@ -108,9 +108,7 @@ javac -version
 
 ## Bot API.
 
-The full API to connect to backend is defined [here](https://github.com/in-silico/judge-backend/blob/file-sync/README.md#bot-api)
-
-**TODO: Change link after merge**
+The full API to connect to backend is defined [here](https://github.com/in-silico/judge-backend#bot-api)
 
 The submissions must follow the below schema:
 
@@ -136,6 +134,39 @@ var data = {
 }
 ```
 
+The verdict must follow the below schema:
+
+```javascript
+{
+  "_id": "string",          // submission id
+  "verdict": [              // array with several objects. 
+                            // Each object corresponds to the judgment of ONE test case
+    {
+      "test_case":"string", // test case id
+      "time":"string",      // execution time
+      "memory":"string",    // used memory
+      "exit_code":"string", // exit code
+      "verdict":"string"    // verdict
+    }
+  ]
+}
+```
+
+example : 
+```javascript
+{
+  "_id": "576205a64aade5a16e832ff2",
+  "verdict": [
+    {
+      "test_case":"a5f4f3ae5f69b3dc8e5ad138d4e376f2",
+      "time":"2s",
+      "memory":"0KB",
+      "exit_code":"0",
+      "verdict":"TIME_LIMIT_EXCEEDED"
+    }
+  ]
+}
+```
 
 Contributing
 ============
